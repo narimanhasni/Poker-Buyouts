@@ -3,7 +3,6 @@
 /* ─── Variables ─────────────────────────────────────────────────────────────── */
 :root {
   --felt: #0a2e1a;
-  --felt-light: #0d3d22;
   --gold: #c9a84c;
   --gold-light: #e8c97a;
   --gold-dim: #7a6330;
@@ -13,16 +12,51 @@
   --red-bright: #e0243a;
   --shadow: 0 8px 32px rgba(0,0,0,0.6);
   --glow-gold: 0 0 20px rgba(201,168,76,0.3);
+
+  /* Fluid type scale — works from 320px (SE) up to 430px (Pro Max) */
+  --text-xs:   clamp(0.65rem,  2.5vw, 0.75rem);
+  --text-sm:   clamp(0.85rem,  3.2vw, 1rem);
+  --text-base: clamp(1rem,     3.8vw, 1.1rem);
+  --text-lg:   clamp(1.1rem,   4.2vw, 1.25rem);
+  --text-xl:   clamp(1.6rem,   7vw,   2.8rem);
+
+  /* Fluid spacing */
+  --space-xs:  clamp(6px,  2vw,  10px);
+  --space-sm:  clamp(10px, 3vw,  16px);
+  --space-md:  clamp(14px, 4vw,  20px);
+  --space-lg:  clamp(20px, 5vw,  30px);
+
+  /* iOS safe areas */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+}
+
+/* ─── Reset ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* removes iOS blue flash on tap */
 }
 
 /* ─── Base ───────────────────────────────────────────────────────────────────── */
-* { box-sizing: border-box; }
+html {
+  height: -webkit-fill-available; /* iOS 100vh fix */
+}
 
 body {
   font-family: 'Crimson Pro', Georgia, serif;
+  font-size: var(--text-base);
   max-width: 540px;
   margin: 0 auto;
-  padding: 30px 20px 60px;
+
+  /* Respect notch / Dynamic Island / home bar */
+  padding:
+    calc(var(--safe-top) + var(--space-lg))
+    calc(var(--safe-right) + var(--space-md))
+    calc(var(--safe-bottom) + 60px)
+    calc(var(--safe-left) + var(--space-md));
+
   background-color: var(--felt);
   background-image:
     radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 60%),
@@ -30,41 +64,47 @@ body {
     repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px);
   color: var(--cream);
   min-height: 100vh;
+  min-height: -webkit-fill-available;
+
+  /* Smooth scrolling & momentum on iOS */
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
 
 /* ─── Header ─────────────────────────────────────────────────────────────────── */
 header {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: var(--space-lg);
 }
 
 header::before,
 header::after {
   content: '♠  ♥  ♣  ♦';
   display: block;
-  font-size: 13px;
+  font-size: var(--text-xs);
   letter-spacing: 8px;
   color: var(--gold-dim);
-  margin: 6px 0;
+  margin: 4px 0;
 }
 
 h1 {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 2.8rem;
+  font-size: var(--text-xl);
   font-weight: 900;
   color: var(--gold-light);
   text-shadow: 0 2px 12px rgba(201,168,76,0.5), 0 0 40px rgba(201,168,76,0.2);
   margin: 0;
   letter-spacing: 2px;
+  line-height: 1.1;
 }
 
 .subtitle {
   font-weight: 300;
-  font-size: 0.9rem;
+  font-size: var(--text-xs);
   color: var(--cream-dim);
   letter-spacing: 4px;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: var(--space-xs);
 }
 
 /* ─── Divider ────────────────────────────────────────────────────────────────── */
@@ -72,10 +112,11 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 20px 0;
+  margin: var(--space-md) 0;
   color: var(--gold-dim);
-  font-size: 12px;
+  font-size: var(--text-xs);
   letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
 .divider::before,
@@ -91,12 +132,11 @@ h1 {
   background: linear-gradient(145deg, #1e2d1a, #0f1f0e);
   border: 1px solid var(--gold-dim);
   border-top-color: var(--gold);
-  padding: 20px 18px 18px;
-  margin: 14px 0;
-  border-radius: 4px;
+  padding: var(--space-md) var(--space-sm) var(--space-sm);
+  margin: var(--space-sm) 0;
+  border-radius: 6px;
   position: relative;
   box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.15);
-  transition: box-shadow 0.2s;
   overflow: hidden;
 }
 
@@ -108,39 +148,39 @@ h1 {
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
-.player:hover {
-  box-shadow: var(--shadow), var(--glow-gold), inset 0 1px 0 rgba(201,168,76,0.15);
-}
-
 .player-number {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--gold-dim);
-  margin-bottom: 14px;
+  margin-bottom: var(--space-sm);
 }
 
 .player label {
   display: block;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--gold-dim);
-  margin: 12px 0 5px;
+  margin: var(--space-sm) 0 var(--space-xs);
   font-weight: 600;
 }
 
 .player input {
   width: 100%;
-  padding: 10px 14px;
+  /* 16px minimum prevents iOS auto-zoom on focus */
+  font-size: max(16px, var(--text-sm));
+  padding: var(--space-sm) var(--space-sm);
   background: rgba(0,0,0,0.35);
   border: 1px solid rgba(201,168,76,0.2);
-  border-radius: 3px;
+  border-radius: 4px;
   color: var(--cream);
   font-family: 'Crimson Pro', serif;
-  font-size: 1rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  /* Prevents iOS inner shadow on inputs */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .player input::placeholder { color: rgba(196,184,154,0.3); }
@@ -153,17 +193,22 @@ h1 {
 /* ─── Buttons ────────────────────────────────────────────────────────────────── */
 button {
   width: 100%;
-  padding: 14px 20px;
-  margin: 8px 0;
+  /* 44px minimum touch target (Apple HIG) */
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  margin: var(--space-xs) 0;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   font-family: 'Crimson Pro', serif;
-  font-size: 1rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
   transition: all 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation; /* removes 300ms iOS tap delay */
 }
 
 .add-btn {
@@ -172,7 +217,8 @@ button {
   color: var(--gold);
 }
 
-.add-btn:hover {
+.add-btn:hover,
+.add-btn:active {
   border-color: var(--gold);
   color: var(--gold-light);
   box-shadow: var(--glow-gold);
@@ -184,34 +230,39 @@ button {
   color: var(--cream);
   border: 1px solid rgba(224,36,58,0.4);
   box-shadow: 0 4px 16px rgba(176,28,46,0.4);
-  margin-top: 14px;
+  margin-top: var(--space-sm);
 }
 
-.calc-btn:hover {
+.calc-btn:hover,
+.calc-btn:active {
   background: linear-gradient(135deg, var(--red), var(--red-bright));
   box-shadow: 0 6px 24px rgba(176,28,46,0.6);
-  transform: translateY(-1px);
 }
-
-.calc-btn:active { transform: translateY(0); }
 
 .remove-btn {
   background: transparent;
   border: 1px solid rgba(176,28,46,0.4);
   color: rgba(224,36,58,0.7);
   width: auto;
+  min-height: 36px;
   float: right;
-  padding: 3px 10px;
+  padding: 4px 12px;
   margin: 0;
-  font-size: 0.8rem;
-  border-radius: 3px;
+  font-size: var(--text-xs);
+  border-radius: 4px;
   letter-spacing: 0;
 }
 
-.remove-btn:hover {
+.remove-btn:hover,
+.remove-btn:active {
   background: rgba(176,28,46,0.2);
   border-color: var(--red-bright);
   color: var(--red-bright);
+}
+
+/* ─── Actions ────────────────────────────────────────────────────────────────── */
+.actions {
+  margin-top: var(--space-sm);
 }
 
 /* ─── Results ────────────────────────────────────────────────────────────────── */
@@ -219,9 +270,9 @@ button {
   background: linear-gradient(145deg, #0d1f0b, #121f10);
   border: 1px solid var(--gold-dim);
   border-top-color: var(--gold);
-  padding: 22px 20px;
-  border-radius: 4px;
-  margin-top: 24px;
+  padding: var(--space-md) var(--space-sm);
+  border-radius: 6px;
+  margin-top: var(--space-md);
   box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.1);
   position: relative;
   overflow: hidden;
@@ -238,9 +289,9 @@ button {
 .result h3 {
   font-family: 'Playfair Display', serif;
   color: var(--gold-light);
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   letter-spacing: 2px;
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-sm);
   text-transform: uppercase;
 }
 
@@ -255,16 +306,18 @@ button {
 }
 
 .transaction {
-  padding: 12px 16px;
-  margin: 8px 0;
+  padding: var(--space-sm) var(--space-sm);
+  margin: var(--space-xs) 0;
   background: rgba(0,0,0,0.3);
   border: 1px solid rgba(201,168,76,0.12);
-  border-radius: 3px;
-  font-size: 1.05rem;
+  border-radius: 4px;
+  font-size: var(--text-sm);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   flex-wrap: wrap;
+  /* Ensure readable tap area */
+  min-height: 44px;
 }
 
 .transaction strong { color: var(--gold-light); }
@@ -274,7 +327,7 @@ button {
 .transaction .amount {
   margin-left: auto;
   font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--gold);
   font-weight: 700;
 }
@@ -283,6 +336,7 @@ button {
   color: var(--cream-dim);
   font-style: italic;
   text-align: center;
-  padding: 10px 0;
+  padding: var(--space-sm) 0;
   letter-spacing: 1px;
+  font-size: var(--text-sm);
 }

@@ -2,28 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- iOS: prevent zoom, respect safe areas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- PWA / Add to Home Screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Poker Settler">
+  <meta name="theme-color" content="#0a2e1a">
+
   <title>Poker Settler</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header>
-    <h1>🎴Poker Settler🎴</h1>
+    <h1>Poker Settler</h1>
     <p class="subtitle">End of Night Settlement</p>
   </header>
 
-  <div class="divider">The Table</div>
+  <main>
+    <div class="divider">The Table</div>
 
-  <div id="players"></div>
+    <div id="players"></div>
 
-  <button class="add-btn" onclick="addPlayer()">+ Add Player</button>
-  <button class="calc-btn" onclick="calculate()">Settle Up</button>
+    <div class="actions">
+      <button class="add-btn" onclick="addPlayer()">+ Add Player</button>
+      <button class="calc-btn" onclick="calculate()">Settle Up</button>
+    </div>
 
-  <div id="results"></div>
+    <div id="results"></div>
+  </main>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
