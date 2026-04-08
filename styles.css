@@ -96,6 +96,74 @@ h1 {
   margin-top: var(--space-xs);
 }
 
+/* ─── Tab Navigation ───────────────────────────────────────────────────────────── */
+.tab-nav {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--space-xs);
+  border-radius: 6px;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-xs);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--cream-dim);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-size: var(--text-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  min-height: auto;
+  margin: 0;
+}
+
+.tab-btn:active {
+  transform: scale(1);
+}
+
+.tab-btn .tab-icon {
+  font-size: 1.4rem;
+  display: block;
+}
+
+.tab-btn .tab-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.1));
+  color: var(--gold-light);
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+
+/* ─── Tab Content ────────────────────────────────────────────────────────────── */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* ─── Divider ────────────────────────────────────────────────────────────────── */
 .divider {
   display: flex;
@@ -136,9 +204,8 @@ h1 {
   box-shadow: var(--shadow), var(--glow-gold), inset 0 1px 0 rgba(201,168,76,0.15);
 }
 
-/* Gold top shimmer line */
 .player::after {
-  content: \'\';
+  content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
@@ -181,7 +248,7 @@ h1 {
   border: 1px solid rgba(201,168,76,0.2);
   border-radius: 4px;
   color: var(--cream);
-  font-family: \'Crimson Pro\', serif;
+  font-family: 'Crimson Pro', serif;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
@@ -195,9 +262,8 @@ h1 {
   box-shadow: 0 0 0 2px rgba(201,168,76,0.15);
 }
 
-/* ─── Swipe hint ─────────────────────────────────────────────────────────────── */
 .player::before {
-  content: \'← swipe to remove\';
+  content: '← swipe to remove';
   position: absolute;
   right: var(--space-sm);
   top: 50%;
@@ -315,6 +381,35 @@ button:active { transform: scale(0.97); }
   color: var(--gold-light);
 }
 
+.new-game-btn {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  margin-top: var(--space-sm);
+  font-size: var(--text-xs);
+  letter-spacing: 3px;
+}
+
+.new-game-btn:hover, .new-game-btn:active {
+  background: rgba(201,168,76,0.08);
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.reset-btn {
+  background: rgba(176, 28, 46, 0.15);
+  border: 1px solid rgba(176, 28, 46, 0.4);
+  color: var(--red-bright);
+  margin-top: var(--space-md);
+  font-size: var(--text-xs);
+  letter-spacing: 3px;
+}
+
+.reset-btn:hover, .reset-btn:active {
+  background: rgba(176, 28, 46, 0.25);
+  border-color: var(--red-bright);
+}
+
 .actions { margin-top: var(--space-sm); }
 
 /* ─── Results ────────────────────────────────────────────────────────────────── */
@@ -427,4 +522,223 @@ button:active { transform: scale(0.97); }
   padding: var(--space-sm) 0;
   letter-spacing: 1px;
   font-size: var(--text-sm);
+}
+
+/* ─── Hall of Fame: Stats Grid ────────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.stat-card {
+  background: linear-gradient(145deg, #1e2d1a, #0f1f0e);
+  border: 1px solid var(--gold-dim);
+  border-top-color: var(--gold);
+  border-radius: 6px;
+  padding: var(--space-md) var(--space-sm);
+  text-align: center;
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  pointer-events: none;
+}
+
+.stat-label {
+  font-size: var(--text-xs);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: var(--space-xs);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: var(--text-lg);
+  color: var(--gold-light);
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.stat-sublabel {
+  font-size: var(--text-xs);
+  color: var(--cream-dim);
+}
+
+/* ─── Leaderboard Tabs ───────────────────────────────────────────────────────── */
+.leaderboard-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.leaderboard-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: var(--space-xs) var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--cream-dim);
+  font-size: var(--text-xs);
+  letter-spacing: 2px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  min-height: 40px;
+}
+
+.leaderboard-btn:active {
+  transform: scale(1);
+}
+
+.leaderboard-btn.active {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.1));
+  color: var(--gold-light);
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+
+.leaderboard-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+/* ─── Leaderboard Content ────────────────────────────────────────────────────── */
+#leaderboard-content {
+  background: linear-gradient(145deg, #0d1f0b, #121f10);
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  padding: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  font-size: var(--text-sm);
+}
+
+.leaderboard-row:last-child {
+  border-bottom: none;
+}
+
+.medal {
+  font-size: var(--text-lg);
+  min-width: 24px;
+  text-align: center;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.player-name {
+  flex: 1;
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.leaderboard-value {
+  font-family: 'Playfair Display', serif;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.leaderboard-value.positive {
+  color: #4caf84;
+}
+
+.leaderboard-value.negative {
+  color: var(--red-bright);
+}
+
+.empty-message {
+  color: var(--cream-dim);
+  text-align: center;
+  padding: var(--space-md);
+  font-style: italic;
+  font-size: var(--text-sm);
+}
+
+/* ─── Session History ────────────────────────────────────────────────────────── */
+#session-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.session-card {
+  background: linear-gradient(145deg, #1e2d1a, #0f1f0e);
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  padding: var(--space-md) var(--space-sm);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.15);
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.session-date {
+  font-size: var(--text-xs);
+  color: var(--gold-light);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.session-players {
+  font-size: var(--text-xs);
+  color: var(--cream-dim);
+}
+
+.session-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-result {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  padding: 2px 0;
+}
+
+.session-result span:first-child {
+  color: var(--cream-dim);
+}
+
+.session-result .amount {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: var(--text-xs);
+}
+
+.session-result .amount.net-win {
+  color: #4caf84;
+}
+
+.session-result .amount.net-loss {
+  color: var(--red-bright);
+}
+
+.session-result .amount.net-even {
+  color: var(--cream-dim);
 }

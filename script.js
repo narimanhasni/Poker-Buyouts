@@ -1,6 +1,37 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 
 let playerCount = 0;
+let currentLeaderboardType = 'totalWinnings';
+const STORAGE_KEY = 'pokerSettlerData';
+let appData = {
+  sessions: [],
+  playerStats: {}
+};
+
+// ─── Storage ──────────────────────────────────────────────────────────────────
+
+function loadData() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    appData = JSON.parse(stored);
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+}
+
+function getPlayerStats(name) {
+  if (!appData.playerStats[name]) {
+    appData.playerStats[name] = {
+      totalWinnings: 0,
+      gamesPlayed: 0,
+      wins: 0,
+      losses: 0
+    };
+  }
+  return appData.playerStats[name];
+}
 
 // ─── Haptic ───────────────────────────────────────────────────────────────────
 
@@ -19,6 +50,224 @@ function haptic(style = 'light') {
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.01);
   } catch (_) {}
+}
+
+// ─── Tab Navigation ───────────────────────────────────────────────────────────
+
+function switchTab(tabName) {
+  haptic('light');
+  
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Deactivate all buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show selected tab
+  document.getElementById(`${tabName}-tab`).classList.add('active');
+  document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+  
+  // Load Hall of Fame data if switching to it
+  if (tabName === 'halloffame') {
+    renderHallOfFame();
+  }
+}
+
+// ─── Hall of Fame ──────────────────────────────────────────────────────────────
+
+function renderHallOfFame() {
+  // Update stat cards
+  updateStatCards();
+  
+  // Render leaderboard
+  switchLeaderboard(currentLeaderboardType);
+  
+  // Render session history
+  renderSessionHistory();
+}
+
+function updateStatCards() {
+  const stats = appData.playerStats;
+  
+  if (Object.keys(stats).length === 0) {
+    document.getElementById('stat-biggest-winner').textContent = '—';
+    document.getElementById('stat-biggest-winner-amount').textContent = '$0';
+    document.getElementById('stat-biggest-loser').textContent = '—';
+    document.getElementById('stat-biggest-loser-amount').textContent = '$0';
+    document.getElementById('stat-most-games').textContent = '—';
+    document.getElementById('stat-most-games-count').textContent = '0';
+    document.getElementById('stat-biggest-fish').textContent = '—';
+    document.getElementById('stat-biggest-fish-avg').textContent = '$0 avg';
+    return;
+  }
+
+  // Biggest Winner
+  const sortedByWinnings = Object.entries(stats)
+    .sort((a, b) => b[1].totalWinnings - a[1].totalWinnings);
+  
+  if (sortedByWinnings.length > 0) {
+    const [winnerName, winnerStats] = sortedByWinnings[0];
+    document.getElementById('stat-biggest-winner').textContent = winnerName;
+    document.getElementById('stat-biggest-winner-amount').textContent = 
+      `+$${winnerStats.totalWinnings.toFixed(2)}`;
+  }
+
+  // Biggest Loser
+  const sortedByLosings = Object.entries(stats)
+    .sort((a, b) => a[1].totalWinnings - b[1].totalWinnings);
+  
+  if (sortedByLosings.length > 0) {
+    const [loserName, loserStats] = sortedByLosings[0];
+    document.getElementById('stat-biggest-loser').textContent = loserName;
+    document.getElementById('stat-biggest-loser-amount').textContent = 
+      `$${loserStats.totalWinnings.toFixed(2)}`;
+  }
+
+  // Most Games
+  const sortedByGames = Object.entries(stats)
+    .sort((a, b) => b[1].gamesPlayed - a[1].gamesPlayed);
+  
+  if (sortedByGames.length > 0) {
+    const [playerName, playerStats] = sortedByGames[0];
+    document.getElementById('stat-most-games').textContent = playerName;
+    document.getElementById('stat-most-games-count').textContent = playerStats.gamesPlayed;
+  }
+
+  // Biggest Fish (most losses/negative average)
+  const sortedByFish = Object.entries(stats)
+    .filter(([_, s]) => s.gamesPlayed > 0)
+    .sort((a, b) => {
+      const avgA = a[1].totalWinnings / a[1].gamesPlayed;
+      const avgB = b[1].totalWinnings / b[1].gamesPlayed;
+      return avgA - avgB;
+    });
+  
+  if (sortedByFish.length > 0) {
+    const [fishName, fishStats] = sortedByFish[0];
+    const avgLoss = fishStats.totalWinnings / fishStats.gamesPlayed;
+    document.getElementById('stat-biggest-fish').textContent = fishName;
+    document.getElementById('stat-biggest-fish-avg').textContent = 
+      `${avgLoss.toFixed(2)}/game`;
+  }
+}
+
+function switchLeaderboard(type) {
+  currentLeaderboardType = type;
+  
+  // Update button states
+  document.querySelectorAll('.leaderboard-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  renderLeaderboard(type);
+}
+
+function renderLeaderboard(type) {
+  const stats = appData.playerStats;
+  const container = document.getElementById('leaderboard-content');
+  
+  if (Object.keys(stats).length === 0) {
+    container.innerHTML = '<p class="empty-message">No games played yet. Start a game!</p>';
+    return;
+  }
+
+  let entries = Object.entries(stats);
+  let sorted = [];
+
+  switch(type) {
+    case 'totalWinnings':
+      sorted = entries.sort((a, b) => b[1].totalWinnings - a[1].totalWinnings);
+      break;
+    case 'gamesPlayed':
+      sorted = entries.sort((a, b) => b[1].gamesPlayed - a[1].gamesPlayed);
+      break;
+    case 'winRate':
+      sorted = entries
+        .filter(([_, s]) => s.gamesPlayed > 0)
+        .sort((a, b) => {
+          const rateA = (a[1].wins / a[1].gamesPlayed) * 100;
+          const rateB = (b[1].wins / b[1].gamesPlayed) * 100;
+          return rateB - rateA;
+        });
+      break;
+  }
+
+  let html = '';
+  sorted.forEach(([name, stats], index) => {
+    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1;
+    
+    let value = '';
+    if (type === 'totalWinnings') {
+      const sign = stats.totalWinnings >= 0 ? '+' : '';
+      value = `${sign}$${stats.totalWinnings.toFixed(2)}`;
+    } else if (type === 'gamesPlayed') {
+      value = stats.gamesPlayed;
+    } else if (type === 'winRate') {
+      const rate = stats.gamesPlayed > 0 ? ((stats.wins / stats.gamesPlayed) * 100).toFixed(1) : 0;
+      value = `${rate}%`;
+    }
+
+    const valueClass = stats.totalWinnings >= 0 ? 'positive' : 'negative';
+
+    html += `
+      <div class="leaderboard-row">
+        <span class="medal">${medal}</span>
+        <span class="player-name">${name}</span>
+        <span class="leaderboard-value ${valueClass}">${value}</span>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function renderSessionHistory() {
+  const container = document.getElementById('session-history');
+  
+  if (appData.sessions.length === 0) {
+    container.innerHTML = '<p class="empty-message">No sessions recorded yet.</p>';
+    return;
+  }
+
+  let html = '';
+  const recentSessions = appData.sessions.slice(-10).reverse();
+  
+  recentSessions.forEach((session, index) => {
+    const date = new Date(session.timestamp);
+    const dateStr = date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined 
+    });
+    
+    let winnersHtml = '';
+    session.transactions.forEach(({ from, to, amount }) => {
+      winnersHtml += `<span class="session-player">${to}</span>`;
+    });
+
+    html += `
+      <div class="session-card">
+        <div class="session-header">
+          <span class="session-date">${dateStr}</span>
+          <span class="session-players">${Object.keys(session.nets).length} players</span>
+        </div>
+        <div class="session-details">
+          ${Object.entries(session.nets)
+            .map(([name, net]) => {
+              const sign = net > 0 ? '+' : '';
+              const cls = net > 0.01 ? 'net-win' : net < -0.01 ? 'net-loss' : 'net-even';
+              return `<div class="session-result"><span>${name}</span><span class="amount ${cls}">${sign}$${net.toFixed(2)}</span></div>`;
+            })
+            .join('')}
+        </div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
 }
 
 // ─── Player Management ────────────────────────────────────────────────────────
@@ -117,6 +366,25 @@ function calculate() {
   }
 
   const transactions = settle(nets);
+  
+  // Save session data
+  const session = {
+    timestamp: new Date().toISOString(),
+    nets: nets,
+    transactions: transactions
+  };
+  appData.sessions.push(session);
+
+  // Update player stats
+  Object.entries(nets).forEach(([name, net]) => {
+    const playerStat = getPlayerStats(name);
+    playerStat.totalWinnings += net;
+    playerStat.gamesPlayed += 1;
+    if (net > 0.01) playerStat.wins += 1;
+    if (net < -0.01) playerStat.losses += 1;
+  });
+
+  saveData();
   renderResults(transactions, nets);
 }
 
@@ -208,10 +476,20 @@ function renderResults(transactions, nets) {
       <div class="divider">Payments</div>
       ${transHtml}
       <button class="share-btn" onclick="shareResults()">↑ Share Results</button>
+      <button class="new-game-btn" onclick="resetForNewGame()">🔄 New Game</button>
     </div>`;
 
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   el.querySelectorAll('.transaction').forEach(t => t.classList.add('tx-animate'));
+}
+
+function resetForNewGame() {
+  haptic('light');
+  document.getElementById('players').innerHTML = '';
+  document.getElementById('results').innerHTML = '';
+  playerCount = 0;
+  addPlayer();
+  addPlayer();
 }
 
 // ─── Share ────────────────────────────────────────────────────────────────────
@@ -253,7 +531,22 @@ function shareResults() {
   }
 }
 
+// ─── History Management ───────────────────────────────────────────────────────
+
+function confirmResetHistory() {
+  if (confirm('⚠️ Are you sure? This will permanently delete all game history and leaderboard data.')) {
+    appData = {
+      sessions: [],
+      playerStats: {}
+    };
+    saveData();
+    haptic('heavy');
+    renderHallOfFame();
+  }
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
+loadData();
 addPlayer();
 addPlayer();
