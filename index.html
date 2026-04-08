@@ -1,96 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Poker Settler">
-  <meta name="theme-color" content="#0a2e1a">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <title>Poker Settler</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Poker Settler" />
+    <meta name="theme-color" content="#0a2e1a" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <title>Poker Settler</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Poker Settler</h1>
+      <p class="subtitle">End of Night Settlement</p>
+    </header>
 
-  <header>
-    <h1>Poker Settler</h1>
-    <p class="subtitle">End of Night Settlement</p>
-  </header>
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button
+        class="tab-btn active"
+        data-tab="settler"
+        onclick="switchTab('settler')"
+      >
+        <span class="tab-icon">🃏</span>
+        <span class="tab-label">Settler</span>
+      </button>
+      <button
+        class="tab-btn"
+        data-tab="halloffame"
+        onclick="switchTab('halloffame')"
+      >
+        <span class="tab-icon">🏆</span>
+        <span class="tab-label">Hall of Fame</span>
+      </button>
+    </nav>
 
-  <!-- Tab Navigation -->
-  <nav class="tab-nav">
-    <button class="tab-btn active" data-tab="settler" onclick="switchTab('settler')">
-      <span class="tab-icon">🃏</span>
-      <span class="tab-label">Settler</span>
-    </button>
-    <button class="tab-btn" data-tab="halloffame" onclick="switchTab('halloffame')">
-      <span class="tab-icon">🏆</span>
-      <span class="tab-label">Hall of Fame</span>
-    </button>
-  </nav>
+    <main>
+      <!-- SETTLER TAB -->
+      <div id="settler-tab" class="tab-content active">
+        <div class="divider">Conversion Rate</div>
 
-  <main>
-    <!-- SETTLER TAB -->
-    <div id="settler-tab" class="tab-content active">
-      <div class="divider">The Table</div>
+        <div class="conversion-section">
+          <div class="conversion-inputs">
+            <div class="conversion-input-group">
+              <label for="chip-value">Chip Value</label>
+              <input
+                type="number"
+                id="chip-value"
+                value="200"
+                min="1"
+                step="any"
+                oninput="updateConversionRate()"
+              />
+            </div>
+            <div class="conversion-equals">=</div>
+            <div class="conversion-input-group">
+              <label for="real-value">Real Money</label>
+              <input
+                type="number"
+                id="real-value"
+                value="10"
+                min="0.01"
+                step="any"
+                oninput="updateConversionRate()"
+              />
+            </div>
+          </div>
+          <div id="conversion-display" class="conversion-display">
+            $200 chips = $10.00 real (×0.0500)
+          </div>
+        </div>
 
-      <div id="players"></div>
+        <div class="divider">The Table</div>
 
-      <div class="actions">
-        <button class="add-btn" onclick="addPlayer()">+ Add Player</button>
-        <button class="calc-btn" onclick="calculate()">Settle Up</button>
+        <div id="players"></div>
+
+        <div class="actions">
+          <button class="add-btn" onclick="addPlayer()">+ Add Player</button>
+          <button class="calc-btn" onclick="calculate()">Settle Up</button>
+        </div>
+
+        <div id="results"></div>
       </div>
 
-      <div id="results"></div>
-    </div>
+      <!-- HALL OF FAME TAB -->
+      <div id="halloffame-tab" class="tab-content">
+        <div class="divider">Hall of Fame</div>
 
-    <!-- HALL OF FAME TAB -->
-    <div id="halloffame-tab" class="tab-content">
-      <div class="divider">Hall of Fame</div>
-      
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Biggest Winner</div>
-          <div class="stat-value" id="stat-biggest-winner">—</div>
-          <div class="stat-sublabel" id="stat-biggest-winner-amount">$0</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Biggest Winner</div>
+            <div class="stat-value" id="stat-biggest-winner">—</div>
+            <div class="stat-sublabel" id="stat-biggest-winner-amount">$0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Biggest Loser</div>
+            <div class="stat-value" id="stat-biggest-loser">—</div>
+            <div class="stat-sublabel" id="stat-biggest-loser-amount">$0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Most Games</div>
+            <div class="stat-value" id="stat-most-games">—</div>
+            <div class="stat-sublabel" id="stat-most-games-count">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Biggest Fish</div>
+            <div class="stat-value" id="stat-biggest-fish">—</div>
+            <div class="stat-sublabel" id="stat-biggest-fish-avg">$0 avg</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Biggest Loser</div>
-          <div class="stat-value" id="stat-biggest-loser">—</div>
-          <div class="stat-sublabel" id="stat-biggest-loser-amount">$0</div>
+
+        <div class="divider">Player Leaderboard</div>
+
+        <div class="leaderboard-tabs">
+          <button
+            class="leaderboard-btn active"
+            onclick="switchLeaderboard('totalWinnings')"
+          >
+            Total Winnings
+          </button>
+          <button
+            class="leaderboard-btn"
+            onclick="switchLeaderboard('gamesPlayed')"
+          >
+            Games Played
+          </button>
+          <button
+            class="leaderboard-btn"
+            onclick="switchLeaderboard('winRate')"
+          >
+            Win Rate
+          </button>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Most Games</div>
-          <div class="stat-value" id="stat-most-games">—</div>
-          <div class="stat-sublabel" id="stat-most-games-count">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Biggest Fish</div>
-          <div class="stat-value" id="stat-biggest-fish">—</div>
-          <div class="stat-sublabel" id="stat-biggest-fish-avg">$0 avg</div>
+
+        <div id="leaderboard-content"></div>
+
+        <div class="divider">Session History</div>
+        <div id="session-history"></div>
+
+        <div style="margin-top: var(--space-lg); text-align: center">
+          <button class="reset-btn" onclick="confirmResetHistory()">
+            🗑️ Clear History
+          </button>
         </div>
       </div>
+    </main>
 
-      <div class="divider">Player Leaderboard</div>
-      
-      <div class="leaderboard-tabs">
-        <button class="leaderboard-btn active" onclick="switchLeaderboard('totalWinnings')">Total Winnings</button>
-        <button class="leaderboard-btn" onclick="switchLeaderboard('gamesPlayed')">Games Played</button>
-        <button class="leaderboard-btn" onclick="switchLeaderboard('winRate')">Win Rate</button>
-      </div>
-
-      <div id="leaderboard-content"></div>
-
-      <div class="divider">Session History</div>
-      <div id="session-history"></div>
-
-      <div style="margin-top: var(--space-lg); text-align: center;">
-        <button class="reset-btn" onclick="confirmResetHistory()">🗑️ Clear History</button>
-      </div>
-    </div>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

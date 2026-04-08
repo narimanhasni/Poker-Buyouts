@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:wght@300;400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Pro:wght@300;400;600&display=swap");
 
 /* ─── Variables ─────────────────────────────────────────────────────────────── */
 :root {
@@ -10,49 +10,66 @@
   --cream-dim: #c4b89a;
   --red: #b01c2e;
   --red-bright: #e0243a;
-  --shadow: 0 8px 32px rgba(0,0,0,0.6);
-  --glow-gold: 0 0 20px rgba(201,168,76,0.3);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --glow-gold: 0 0 20px rgba(201, 168, 76, 0.3);
 
-  --text-xs:   clamp(0.65rem, 2.5vw, 0.75rem);
-  --text-sm:   clamp(0.85rem, 3.2vw, 1rem);
-  --text-base: clamp(1rem,    3.8vw, 1.1rem);
-  --text-lg:   clamp(1.1rem,  4.2vw, 1.25rem);
-  --text-xl:   clamp(1.6rem,  7vw,   2.8rem);
+  --text-xs: clamp(0.65rem, 2.5vw, 0.75rem);
+  --text-sm: clamp(0.85rem, 3.2vw, 1rem);
+  --text-base: clamp(1rem, 3.8vw, 1.1rem);
+  --text-lg: clamp(1.1rem, 4.2vw, 1.25rem);
+  --text-xl: clamp(1.6rem, 7vw, 2.8rem);
 
-  --space-xs: clamp(6px,  2vw, 10px);
+  --space-xs: clamp(6px, 2vw, 10px);
   --space-sm: clamp(10px, 3vw, 16px);
   --space-md: clamp(14px, 4vw, 20px);
   --space-lg: clamp(20px, 5vw, 30px);
 
-  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left:   env(safe-area-inset-left, 0px);
-  --safe-right:  env(safe-area-inset-right, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 /* ─── Reset ──────────────────────────────────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
-html { height: -webkit-fill-available; }
+html {
+  height: -webkit-fill-available;
+}
 
 body {
-  font-family: 'Crimson Pro', Georgia, serif;
+  font-family: "Crimson Pro", Georgia, serif;
   font-size: var(--text-base);
   max-width: 540px;
   margin: 0 auto;
-  padding:
-    calc(var(--safe-top) + var(--space-lg))
-    calc(var(--safe-right) + var(--space-md))
-    calc(var(--safe-bottom) + 60px)
+  padding: calc(var(--safe-top) + var(--space-lg))
+    calc(var(--safe-right) + var(--space-md)) calc(var(--safe-bottom) + 60px)
     calc(var(--safe-left) + var(--space-md));
   background-color: var(--felt);
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 60%),
-    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px),
-    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px);
+  background-image: radial-gradient(
+      ellipse at 50% 0%,
+      rgba(201, 168, 76, 0.07) 0%,
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 40px,
+      rgba(255, 255, 255, 0.012) 40px,
+      rgba(255, 255, 255, 0.012) 41px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 40px,
+      rgba(255, 255, 255, 0.012) 40px,
+      rgba(255, 255, 255, 0.012) 41px
+    );
   color: var(--cream);
   min-height: 100vh;
   min-height: -webkit-fill-available;
@@ -68,7 +85,7 @@ header {
 
 header::before,
 header::after {
-  content: '♠  ♥  ♣  ♦';
+  content: "♠  ♥  ♣  ♦";
   display: block;
   font-size: var(--text-xs);
   letter-spacing: 8px;
@@ -77,11 +94,12 @@ header::after {
 }
 
 h1 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: var(--text-xl);
   font-weight: 900;
   color: var(--gold-light);
-  text-shadow: 0 2px 12px rgba(201,168,76,0.5), 0 0 40px rgba(201,168,76,0.2);
+  text-shadow: 0 2px 12px rgba(201, 168, 76, 0.5),
+    0 0 40px rgba(201, 168, 76, 0.2);
   margin: 0;
   letter-spacing: 2px;
   line-height: 1.1;
@@ -143,7 +161,11 @@ h1 {
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(201, 168, 76, 0.2),
+    rgba(201, 168, 76, 0.1)
+  );
   color: var(--gold-light);
   border-color: var(--gold);
   box-shadow: var(--glow-gold);
@@ -160,8 +182,12 @@ h1 {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ─── Divider ────────────────────────────────────────────────────────────────── */
@@ -178,7 +204,7 @@ h1 {
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
@@ -194,20 +220,23 @@ h1 {
   margin: var(--space-sm) 0;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.15);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201, 168, 76, 0.15);
   color: var(--cream);
   transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
   will-change: transform;
 }
 
 .player:hover {
-  box-shadow: var(--shadow), var(--glow-gold), inset 0 1px 0 rgba(201,168,76,0.15);
+  box-shadow: var(--shadow), var(--glow-gold),
+    inset 0 1px 0 rgba(201, 168, 76, 0.15);
 }
 
 .player::after {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
   pointer-events: none;
@@ -244,26 +273,28 @@ h1 {
   width: 100%;
   font-size: max(16px, var(--text-sm));
   padding: var(--space-sm);
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(201,168,76,0.2);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(201, 168, 76, 0.2);
   border-radius: 4px;
   color: var(--cream);
-  font-family: 'Crimson Pro', serif;
+  font-family: "Crimson Pro", serif;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
   appearance: none;
 }
 
-.player input::placeholder { color: rgba(196,184,154,0.3); }
+.player input::placeholder {
+  color: rgba(196, 184, 154, 0.3);
+}
 
 .player input:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 2px rgba(201,168,76,0.15);
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.15);
 }
 
 .player::before {
-  content: '← swipe to remove';
+  content: "← swipe to remove";
   position: absolute;
   right: var(--space-sm);
   top: 50%;
@@ -271,7 +302,7 @@ h1 {
   font-size: 0.6rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(201,168,76,0.25);
+  color: rgba(201, 168, 76, 0.25);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
@@ -279,9 +310,18 @@ h1 {
 
 /* ─── Card Animations ────────────────────────────────────────────────────────── */
 @keyframes dealIn {
-  0%   { transform: translateY(-40px) rotateX(25deg) scale(0.9); opacity: 0; }
-  60%  { transform: translateY(4px) rotateX(-3deg) scale(1.01); opacity: 1; }
-  100% { transform: translateY(0) rotateX(0) scale(1); opacity: 1; }
+  0% {
+    transform: translateY(-40px) rotateX(25deg) scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(4px) rotateX(-3deg) scale(1.01);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotateX(0) scale(1);
+    opacity: 1;
+  }
 }
 
 .player-enter {
@@ -289,7 +329,8 @@ h1 {
 }
 
 .player-exit {
-  transition: transform 0.35s ease-in, opacity 0.35s ease-in, max-height 0.35s ease-in, margin 0.35s ease-in !important;
+  transition: transform 0.35s ease-in, opacity 0.35s ease-in,
+    max-height 0.35s ease-in, margin 0.35s ease-in !important;
   transform: translateX(-110%) !important;
   opacity: 0 !important;
   max-height: 0 !important;
@@ -308,7 +349,7 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-family: 'Crimson Pro', serif;
+  font-family: "Crimson Pro", serif;
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 2px;
@@ -319,7 +360,9 @@ button {
   touch-action: manipulation;
 }
 
-button:active { transform: scale(0.97); }
+button:active {
+  transform: scale(0.97);
+}
 
 .add-btn {
   background: transparent;
@@ -327,30 +370,32 @@ button:active { transform: scale(0.97); }
   color: var(--gold);
 }
 
-.add-btn:hover, .add-btn:active {
+.add-btn:hover,
+.add-btn:active {
   border-color: var(--gold);
   color: var(--gold-light);
   box-shadow: var(--glow-gold);
-  background: rgba(201,168,76,0.06);
+  background: rgba(201, 168, 76, 0.06);
 }
 
 .calc-btn {
   background: linear-gradient(135deg, #8b1520, var(--red));
   color: var(--cream);
-  border: 1px solid rgba(224,36,58,0.4);
-  box-shadow: 0 4px 16px rgba(176,28,46,0.4);
+  border: 1px solid rgba(224, 36, 58, 0.4);
+  box-shadow: 0 4px 16px rgba(176, 28, 46, 0.4);
   margin-top: var(--space-sm);
 }
 
-.calc-btn:hover, .calc-btn:active {
+.calc-btn:hover,
+.calc-btn:active {
   background: linear-gradient(135deg, var(--red), var(--red-bright));
-  box-shadow: 0 6px 24px rgba(176,28,46,0.6);
+  box-shadow: 0 6px 24px rgba(176, 28, 46, 0.6);
 }
 
 .remove-btn {
   background: transparent;
-  border: 1px solid rgba(176,28,46,0.35);
-  color: rgba(176,28,46,0.7);
+  border: 1px solid rgba(176, 28, 46, 0.35);
+  color: rgba(176, 28, 46, 0.7);
   width: auto;
   min-height: 36px;
   padding: 4px 12px;
@@ -360,8 +405,9 @@ button:active { transform: scale(0.97); }
   letter-spacing: 0;
 }
 
-.remove-btn:hover, .remove-btn:active {
-  background: rgba(176,28,46,0.12);
+.remove-btn:hover,
+.remove-btn:active {
+  background: rgba(176, 28, 46, 0.12);
   border-color: var(--red-bright);
   color: var(--red-bright);
 }
@@ -375,8 +421,9 @@ button:active { transform: scale(0.97); }
   letter-spacing: 3px;
 }
 
-.share-btn:hover, .share-btn:active {
-  background: rgba(201,168,76,0.08);
+.share-btn:hover,
+.share-btn:active {
+  background: rgba(201, 168, 76, 0.08);
   border-color: var(--gold);
   color: var(--gold-light);
 }
@@ -390,8 +437,9 @@ button:active { transform: scale(0.97); }
   letter-spacing: 3px;
 }
 
-.new-game-btn:hover, .new-game-btn:active {
-  background: rgba(201,168,76,0.08);
+.new-game-btn:hover,
+.new-game-btn:active {
+  background: rgba(201, 168, 76, 0.08);
   border-color: var(--gold);
   color: var(--gold-light);
 }
@@ -405,12 +453,15 @@ button:active { transform: scale(0.97); }
   letter-spacing: 3px;
 }
 
-.reset-btn:hover, .reset-btn:active {
+.reset-btn:hover,
+.reset-btn:active {
   background: rgba(176, 28, 46, 0.25);
   border-color: var(--red-bright);
 }
 
-.actions { margin-top: var(--space-sm); }
+.actions {
+  margin-top: var(--space-sm);
+}
 
 /* ─── Results ────────────────────────────────────────────────────────────────── */
 .result {
@@ -420,21 +471,23 @@ button:active { transform: scale(0.97); }
   padding: var(--space-md) var(--space-sm);
   border-radius: 6px;
   margin-top: var(--space-md);
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.1);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201, 168, 76, 0.1);
   position: relative;
   overflow: hidden;
 }
 
 .result::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 .result h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   color: var(--gold-light);
   font-size: var(--text-lg);
   letter-spacing: 2px;
@@ -444,12 +497,17 @@ button:active { transform: scale(0.97); }
 
 .result.error {
   background: linear-gradient(145deg, #2a0a0e, #1a0608);
-  border-color: rgba(176,28,46,0.5);
+  border-color: rgba(176, 28, 46, 0.5);
   border-top-color: var(--red-bright);
 }
 
 .result.error::before {
-  background: linear-gradient(90deg, transparent, var(--red-bright), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--red-bright),
+    transparent
+  );
 }
 
 /* ─── Net Summary ────────────────────────────────────────────────────────────── */
@@ -463,34 +521,48 @@ button:active { transform: scale(0.97); }
   align-items: center;
   padding: var(--space-xs) var(--space-sm);
   margin: 4px 0;
-  background: rgba(0,0,0,0.25);
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   font-size: var(--text-sm);
 }
 
-.net-name { color: var(--cream-dim); }
+.net-name {
+  color: var(--cream-dim);
+}
 
 .net-amount {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-weight: 700;
   font-size: var(--text-sm);
 }
 
-.net-win  { color: #4caf84; }
-.net-loss { color: var(--red-bright); }
-.net-even { color: var(--cream-dim); }
+.net-win {
+  color: #4caf84;
+}
+.net-loss {
+  color: var(--red-bright);
+}
+.net-even {
+  color: var(--cream-dim);
+}
 
 /* ─── Transactions ───────────────────────────────────────────────────────────── */
 @keyframes txSlideIn {
-  from { opacity: 0; transform: translateX(-16px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .transaction {
   padding: var(--space-sm);
   margin: var(--space-xs) 0;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(201,168,76,0.12);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 168, 76, 0.12);
   border-radius: 4px;
   font-size: var(--text-sm);
   display: flex;
@@ -505,11 +577,16 @@ button:active { transform: scale(0.97); }
   animation: txSlideIn 0.35s ease forwards;
 }
 
-.transaction strong { color: var(--gold-light); }
-.transaction .arrow { color: var(--gold-dim); font-size: 0.9em; }
+.transaction strong {
+  color: var(--gold-light);
+}
+.transaction .arrow {
+  color: var(--gold-dim);
+  font-size: 0.9em;
+}
 .transaction .amount {
   margin-left: auto;
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: var(--text-lg);
   color: var(--gold);
   font-weight: 700;
@@ -539,15 +616,17 @@ button:active { transform: scale(0.97); }
   border-radius: 6px;
   padding: var(--space-md) var(--space-sm);
   text-align: center;
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.15);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201, 168, 76, 0.15);
   position: relative;
   overflow: hidden;
 }
 
 .stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
   pointer-events: none;
@@ -563,7 +642,7 @@ button:active { transform: scale(0.97); }
 }
 
 .stat-value {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: var(--text-lg);
   color: var(--gold-light);
   font-weight: 900;
@@ -602,7 +681,11 @@ button:active { transform: scale(0.97); }
 }
 
 .leaderboard-btn.active {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(201, 168, 76, 0.2),
+    rgba(201, 168, 76, 0.1)
+  );
   color: var(--gold-light);
   border-color: var(--gold);
   box-shadow: var(--glow-gold);
@@ -650,7 +733,7 @@ button:active { transform: scale(0.97); }
 }
 
 .leaderboard-value {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: var(--text-sm);
   font-weight: 700;
 }
@@ -684,7 +767,7 @@ button:active { transform: scale(0.97); }
   border: 1px solid var(--gold-dim);
   border-radius: 6px;
   padding: var(--space-md) var(--space-sm);
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(201,168,76,0.15);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201, 168, 76, 0.15);
 }
 
 .session-header {
@@ -726,7 +809,7 @@ button:active { transform: scale(0.97); }
 }
 
 .session-result .amount {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-weight: 700;
   font-size: var(--text-xs);
 }
@@ -741,4 +824,89 @@ button:active { transform: scale(0.97); }
 
 .session-result .amount.net-even {
   color: var(--cream-dim);
+}
+
+/* ─── Conversion Section ───────────────────────────────────────────────────── */
+.conversion-section {
+  background: linear-gradient(145deg, #1e2d1a, #0f1f0e);
+  border: 1px solid var(--gold-dim);
+  border-top-color: var(--gold);
+  border-radius: 6px;
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(201, 168, 76, 0.15);
+  position: relative;
+}
+
+.conversion-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  pointer-events: none;
+}
+
+.conversion-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.conversion-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversion-input-group label {
+  display: block;
+  font-size: var(--text-xs);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: var(--space-xs);
+  font-weight: 600;
+}
+
+.conversion-input-group input {
+  width: 100%;
+  font-size: max(16px, var(--text-sm));
+  padding: var(--space-sm);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 4px;
+  color: var(--cream);
+  font-family: "Crimson Pro", serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.conversion-input-group input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.15);
+}
+
+.conversion-equals {
+  font-size: var(--text-lg);
+  color: var(--gold);
+  font-weight: 700;
+  padding-bottom: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.conversion-display {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--cream-dim);
+  padding: var(--space-xs);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif;
 }

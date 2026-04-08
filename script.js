@@ -3,6 +3,7 @@
 let playerCount = 0;
 let currentLeaderboardType = 'totalWinnings';
 const STORAGE_KEY = 'pokerSettlerData';
+let conversionRate = 1; // chip value to real money (e.g., $200 chips = $10 real)
 let appData = {
   sessions: [],
   playerStats: {}
@@ -31,6 +32,27 @@ function getPlayerStats(name) {
     };
   }
   return appData.playerStats[name];
+}
+
+// ─── Conversion ───────────────────────────────────────────────────────────────
+
+function updateConversionRate() {
+  const chipValue = parseFloat(document.getElementById('chip-value').value) || 200;
+  const realValue = parseFloat(document.getElementById('real-value').value) || 10;
+  conversionRate = realValue / chipValue;
+  updateConversionDisplay();
+}
+
+function updateConversionDisplay() {
+  const chipValue = parseFloat(document.getElementById('chip-value').value) || 200;
+  const realValue = parseFloat(document.getElementById('real-value').value) || 10;
+  const rate = realValue / chipValue;
+  document.getElementById('conversion-display').textContent = 
+    `$${chipValue.toFixed(0)} chips = $${realValue.toFixed(2)} real (×${rate.toFixed(4)})`;
+}
+
+function toRealMoney(chipAmount) {
+  return chipAmount * conversionRate;
 }
 
 // ─── Haptic ───────────────────────────────────────────────────────────────────
@@ -395,7 +417,8 @@ function collectPlayerNets() {
     const name = document.getElementById(`name-${id}`).value.trim() || `Player ${id}`;
     const buyIn = parseFloat(document.getElementById(`buyin-${id}`).value) || 0;
     const final = parseFloat(document.getElementById(`final-${id}`).value) || 0;
-    nets[name] = final - buyIn;
+    const chipNet = final - buyIn;
+    nets[name] = toRealMoney(chipNet); // Convert to real money
   });
   return nets;
 }
@@ -548,5 +571,6 @@ function confirmResetHistory() {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 loadData();
+updateConversionRate(); // Initialize conversion display
 addPlayer();
 addPlayer();
