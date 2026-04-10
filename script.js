@@ -12,15 +12,34 @@ let appData = {
 // ─── Storage ──────────────────────────────────────────────────────────────────
 
 function loadData() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    appData = JSON.parse(stored);
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      appData = JSON.parse(stored);
+    }
+  } catch (err) {
+    console.error('Failed to load data from localStorage:', err);
+    console.warn('Starting with fresh data');
+    appData = {
+      sessions: [],
+      playerStats: {}
+    };
   }
 }
 
 function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  } catch (err) {
+    console.error('Failed to save data to localStorage:', err);
+    if (err.name === 'QuotaExceededError') {
+      alert('⚠️ Storage space is full. Please clear some data or history.');
+    } else {
+      alert('⚠️ Could not save your data. Please check your browser settings.');
+    }
+  }
 }
+
 
 function getPlayerStats(name) {
   if (!appData.playerStats[name]) {
@@ -37,20 +56,27 @@ function getPlayerStats(name) {
 // ─── Conversion ───────────────────────────────────────────────────────────────
 
 function updateConversionRate() {
-  const chipValue = parseFloat(document.getElementById('chip-value').value) || 200;
-  const realValue = parseFloat(document.getElementById('real-value').value) || 10;
+  const chipValueInput = document.getElementById('chip-value').value.trim();
+  const chipValue = chipValueInput === '' ? 200 : parseFloat(chipValueInput) || 200;
+  
+  const realValueInput = document.getElementById('real-value').value.trim();
+  const realValue = realValueInput === '' ? 10 : parseFloat(realValueInput) || 10;
+  
   conversionRate = realValue / chipValue;
   updateConversionDisplay();
 }
 
 function updateConversionDisplay() {
-  const chipValue = parseFloat(document.getElementById('chip-value').value) || 200;
-  const realValue = parseFloat(document.getElementById('real-value').value) || 10;
+  const chipValueInput = document.getElementById('chip-value').value.trim();
+  const chipValue = chipValueInput === '' ? 200 : parseFloat(chipValueInput) || 200;
+  
+  const realValueInput = document.getElementById('real-value').value.trim();
+  const realValue = realValueInput === '' ? 10 : parseFloat(realValueInput) || 10;
+  
   const rate = realValue / chipValue;
   document.getElementById('conversion-display').textContent = 
-    `$${chipValue.toFixed(0)} chips = $${realValue.toFixed(2)} real (×${rate.toFixed(4)})`;
+    `${chipValue.toFixed(0)} chips = $${realValue.toFixed(2)} real (×${rate.toFixed(4)})`;
 }
-
 function toRealMoney(chipAmount) {
   return chipAmount * conversionRate;
 }
@@ -184,7 +210,19 @@ function switchLeaderboard(type) {
   document.querySelectorAll('.leaderboard-btn').forEach(btn => {
     btn.classList.remove('active');
   });
-  event.target.classList.add('active');
+  
+  // Find the button with matching text and activate it
+  const labelMap = {
+    'totalWinnings': 'Total Winnings',
+    'gamesPlayed': 'Games Played',
+    'winRate': 'Win Rate'
+  };
+  
+  document.querySelectorAll('.leaderboard-btn').forEach(btn => {
+    if (btn.textContent.trim() === labelMap[type]) {
+      btn.classList.add('active');
+    }
+  });
   
   renderLeaderboard(type);
 }
@@ -264,11 +302,6 @@ function renderSessionHistory() {
       month: 'short', 
       day: 'numeric', 
       year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined 
-    });
-    
-    let winnersHtml = '';
-    session.transactions.forEach(({ from, to, amount }) => {
-      winnersHtml += `<span class="session-player">${to}</span>`;
     });
 
     html += `
@@ -377,17 +410,96 @@ function setupSwipeToRemove(card) {
 
 // ─── Calculate ────────────────────────────────────────────────────────────────
 
+// NEW: Call this instead of calculate() when user clicks "Settle Up"
 function calculate() {
   haptic('medium');
-  const nets = collectPlayerNets();
-  const total = Object.values(nets).reduce((a, b) => a + b, 0);
+  
+  try {
+    const nets = collectPlayerNets();
+    const total = Object.values(nets).reduce((a, b) => a + b, 0);
 
-  if (Math.abs(total) > 0.01) {
-    renderError(`⚠️ Numbers don't balance — off by $${total.toFixed(2)}`);
+    if (Math.abs(total) > 0.01) {
+      renderError(`⚠️ Numbers don't balance — off by $${total.toFixed(2)}`);
+      return;
+    }
+
+    const transactions = settle(nets);
+    
+    // Show preview before saving
+    showSettlementPreview(transactions, nets);
+  } catch (err) {
+    // collectPlayerNets() will show alert if there's an error
     return;
   }
+}
 
-  const transactions = settle(nets);
+// NEW: Show preview modal
+function showSettlementPreview(transactions, nets) {
+  let summaryHtml = '';
+  for (const [name, net] of Object.entries(nets)) {
+    const sign = net > 0 ? '+' : '';
+    const cls = net > 0.01 ? 'color: #4caf84' : net < -0.01 ? 'color: var(--red-bright)' : 'color: var(--cream-dim)';
+    summaryHtml += `
+      <div class="net-row">
+        <span class="net-name">${name}</span>
+        <span class="net-amount" style="${cls}">${sign}$${net.toFixed(2)}</span>
+      </div>`;
+  }
+
+  let transHtml = '';
+  if (transactions.length === 0) {
+    transHtml = '<p class="even-message">Everyone is even — well played. 🎉</p>';
+  } else {
+    transactions.forEach(({ from, to, amount }) => {
+      transHtml += `
+        <div class="transaction" style="animation-delay: 0ms; opacity: 1;">
+          <strong>${from}</strong>
+          <span class="arrow">→</span>
+          <strong>${to}</strong>
+          <span class="amount">$${amount.toFixed(2)}</span>
+        </div>`;
+    });
+  }
+
+  const el = document.getElementById('results');
+  el.innerHTML = `
+    <div class="result">
+      <h3>📋 Confirm Settlement</h3>
+      <div style="background: rgba(0,0,0,0.3); padding: var(--space-md); border-radius: 6px; margin-bottom: var(--space-md);">
+        <h4 style="color: var(--gold-light); margin-top: 0; margin-bottom: var(--space-sm);">Player Totals</h4>
+        <div class="net-summary">${summaryHtml}</div>
+        
+        <h4 style="color: var(--gold-light); margin-top: var(--space-md); margin-bottom: var(--space-sm);">Payments</h4>
+        ${transHtml}
+      </div>
+      
+      <p style="color: var(--cream-dim); font-size: var(--text-xs); margin-bottom: var(--space-md); text-align: center;">
+        ⚠️ Please review above before confirming. This will be saved to Hall of Fame.
+      </p>
+      
+      <div style="display: flex; gap: var(--space-sm);">
+        <button 
+          style="flex: 1; background: linear-gradient(135deg, #8b1520, var(--red)); color: var(--cream); border: 1px solid rgba(224, 36, 58, 0.4); margin: 0;"
+          onclick="proceedWithSettlement('${JSON.stringify(nets).replace(/'/g, '&quot;')}', '${JSON.stringify(transactions).replace(/'/g, '&quot;')}')">
+          ✓ Confirm & Save
+        </button>
+        <button 
+          style="flex: 1; background: transparent; border: 1px solid var(--gold-dim); color: var(--cream); margin: 0;"
+          onclick="cancelSettlement()">
+          ✕ Cancel & Edit
+        </button>
+      </div>
+    </div>`;
+
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// NEW: Actually save after confirmation
+function proceedWithSettlement(netsJson, transactionsJson) {
+  haptic('heavy');
+  
+  const nets = JSON.parse(netsJson);
+  const transactions = JSON.parse(transactionsJson);
   
   // Save session data
   const session = {
@@ -410,28 +522,57 @@ function calculate() {
   renderResults(transactions, nets);
 }
 
+// NEW: Cancel and go back to editing
+function cancelSettlement() {
+  haptic('light');
+  document.getElementById('results').innerHTML = '';
+}
+
 function collectPlayerNets() {
   const nets = {};
+  const seenNames = new Set();
+  
   document.querySelectorAll('.player').forEach(p => {
     const id = p.id.split('-')[1];
-    const name = document.getElementById(`name-${id}`).value.trim() || `Player ${id}`;
+    let name = document.getElementById(`name-${id}`).value.trim();
+    
+    // Require names
+    if (!name) {
+      alert('⚠️ All players must have a name before settling.');
+      throw new Error('Missing player name');
+    }
+    
+    // Check for duplicates
+    if (seenNames.has(name)) {
+      alert(`⚠️ Duplicate name: "${name}". Each player needs a unique name.`);
+      throw new Error('Duplicate player name');
+    }
+    seenNames.add(name);
+    
     const buyIn = parseFloat(document.getElementById(`buyin-${id}`).value) || 0;
     const final = parseFloat(document.getElementById(`final-${id}`).value) || 0;
+
     const chipNet = final - buyIn;
-    nets[name] = toRealMoney(chipNet); // Convert to real money
+    nets[name] = toRealMoney(chipNet);
   });
   return nets;
 }
 
 // ─── Settlement Algorithm ─────────────────────────────────────────────────────
 
+// NEW: Add this utility function at the top of script.js (around line 10)
+function roundToNearest(amount) {
+  return Math.round(amount * 100) / 100;
+}
+
 function settle(nets) {
   const losers  = [];
   const winners = [];
 
   for (const [name, amount] of Object.entries(nets)) {
-    if (amount < -0.01) losers.push({ name, amount: Math.abs(amount) });
-    if (amount > 0.01)  winners.push({ name, amount });
+    const rounded = roundToNearest(amount);  // ✅ Round first
+    if (rounded < -0.01) losers.push({ name, amount: Math.abs(rounded) });
+    if (rounded > 0.01)  winners.push({ name, amount: rounded });
   }
 
   losers.sort((a, b) => b.amount - a.amount);
@@ -441,12 +582,12 @@ function settle(nets) {
   while (losers.length > 0 && winners.length > 0) {
     const loser   = losers[0];
     const winner  = winners[0];
-    const payment = Math.min(loser.amount, winner.amount);
+    const payment = roundToNearest(Math.min(loser.amount, winner.amount));  // ✅ Round here too
 
     transactions.push({ from: loser.name, to: winner.name, amount: payment });
 
-    loser.amount  -= payment;
-    winner.amount -= payment;
+    loser.amount  = roundToNearest(loser.amount - payment);  // ✅ Round the result
+    winner.amount = roundToNearest(winner.amount - payment);  // ✅ Round the result
 
     if (loser.amount  < 0.01) losers.shift();
     if (winner.amount < 0.01) winners.shift();
@@ -543,15 +684,40 @@ function shareResults() {
     });
   }
 
+  const btn = document.querySelector('.share-btn');
+  
   if (navigator.share) {
-    navigator.share({ title: 'Poker Results', text }).catch(() => {});
+    navigator.share({ title: 'Poker Results', text })
+      .then(() => {
+        btn.textContent = '✓ Shared!';
+        setTimeout(() => btn.textContent = '↑ Share Results', 2000);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Share failed:', err);
+          // Fallback to clipboard
+          fallbackCopyToClipboard(text, btn);
+        }
+      });
+  } else if (navigator.clipboard) {
+    fallbackCopyToClipboard(text, btn);
   } else {
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.querySelector('.share-btn');
+    alert('Share not available on this browser');
+  }
+}
+
+// NEW: Helper function for fallback copy
+function fallbackCopyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
       btn.textContent = '✓ Copied!';
       setTimeout(() => btn.textContent = '↑ Share Results', 2000);
+    })
+    .catch((err) => {
+      console.error('Copy failed:', err);
+      btn.textContent = '✕ Copy failed';
+      setTimeout(() => btn.textContent = '↑ Share Results', 2000);
     });
-  }
 }
 
 // ─── History Management ───────────────────────────────────────────────────────
